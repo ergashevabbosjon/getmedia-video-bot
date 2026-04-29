@@ -464,14 +464,28 @@ def _trim(text: str, max_len: int) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# 8. BOTNI ISHGA TUSHIRISH
+# 8. BOTNI ISHGA TUSHIRISH VA SOXTA VEB-SERVER (Render bepul bo'lishi uchun)
 # ═══════════════════════════════════════════════════════════════════
+from aiohttp import web
+
+async def handle(request):
+    return web.Response(text="GetMedia Bot 24/7 ishlamoqda!")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get('/', handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
 
 async def main() -> None:
-    bot = Bot(
-        token=BOT_TOKEN,
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
-    )
+    # 1. Soxta serverni ishga tushirish (Port band qilish uchun)
+    await start_web_server()
+
+    # 2. Botni ishga tushirish
+    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
     dp.include_router(router)
 
@@ -483,7 +497,6 @@ async def main() -> None:
     finally:
         await bot.session.close()
         logger.info("🛑 Bot to'xtatildi.")
-
 
 if __name__ == "__main__":
     asyncio.run(main())
