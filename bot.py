@@ -36,7 +36,7 @@ from aiogram.types import FSInputFile, Message
 # ═══════════════════════════════════════════════════════════════════
 
 # ⬇️  @BotFather dan olingan tokeningizni shu yerga yozing
-BOT_TOKEN: str = "BU_YERGA_TOKENINGIZNI_YOZING"
+BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
 
 # Vaqtinchalik video fayllar saqlanadigan papka
 TEMP_DIR: Path = Path("downloads")
